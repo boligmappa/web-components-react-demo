@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import "@boligmappa/web-components/BoligmappaSearch";
 
@@ -12,12 +12,30 @@ const searchConfig = {
   language: "NO",
 };
 
-function BoligmappaSearch(props) {
+function BoligmappaSearch({ onPropertiesSelected }) {
+
+  const getProperties = (searchEvent) =>
+    searchEvent.detail.selectedProperties.properties;
+
+  const componentCallback = useCallback((node) => {
+    if (node) {
+      // In React we have to set the event listener on the DOM node using ref
+      node.addEventListener("property-confirmed", (e) => {
+        onPropertiesSelected(
+          getProperties(e).map((property) => property.boligmappaNumber)
+        );
+      });
+    }
+  }, []);
+
   return (
-    <boligmappa-search
-      development={true}
-      config={JSON.stringify(searchConfig)}
-    ></boligmappa-search>
+    <div>
+      <boligmappa-search
+        ref={componentCallback}
+        development={true}
+        config={JSON.stringify(searchConfig)}
+      ></boligmappa-search>
+    </div>
   );
 }
 
