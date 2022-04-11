@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import BoligmappaAuth from "./components/BoligmappaAuth";
 import BoligmappaConnect from "./components/BoligmappaConnect";
@@ -9,6 +9,20 @@ function App() {
   const [selectedBoligmappaNumbers, setSelectedBoligmappaNumbers] = useState(
     []
   );
+
+  useEffect(() => {
+    const onLoginResult = (e) => {
+      console.log(e);
+    };
+    window.addEventListener("bm-login-success", onLoginResult);
+    window.addEventListener("bm-login-failed", onLoginResult);
+
+    return () => {
+      window.removeEventListener("bm-login-success", onLoginResult);
+      window.removeEventListener("bm-login-failed", onLoginResult);
+    };
+  }, []);
+
   return (
     <div className="App">
       <BoligmappaAuth />
